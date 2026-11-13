@@ -1,0 +1,32 @@
+# Neo4j cho đồ thị GraphRAG (lc_app.graph). Mật khẩu lấy từ NEO4J_PASSWORD trong .env cùng thư mục.
+#   docker compose up -d                                   # khởi động (lần đầu tạo database trắng)
+#   .venv-lc/Scripts/python -m lc_app.graph.load_neo4j     # nạp đồ thị
+#   docker compose down                                    # dừng (dữ liệu giữ trong volume)
+#   docker compose down -v                                 # dừng và XÓA dữ liệu
+# Neo4j Browser: http://localhost:7474 (user neo4j); Bolt: bolt://127.0.0.1:7687
+name: khoa-luan   # tên thư mục có dấu, Docker tự đặt thành "khalun"
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: legal-kb-neo4j
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?Thiếu NEO4J_PASSWORD trong .env}
+      # APOC có sẵn trong image (labs/apoc-*-core.jar): Neo4jGraph.refresh_schema, add_graph_documents,
+      # GraphCypherQAChain của LangChain cần nó
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_dbms_security_procedures_allowlist: apoc.*
+      NEO4J_server_memory_pagecache_size: 512m
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 1g
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+  neo4j_logs:

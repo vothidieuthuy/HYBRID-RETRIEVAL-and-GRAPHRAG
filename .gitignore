@@ -1,0 +1,15 @@
+# Chỉ đưa code lên GitHub. Dữ liệu, kết quả, cache, _archive và môi trường ảo giữ trên máy.
+/*
+!/.gitignore
+!/.env.example
+!/requirements.txt
+!/docker-compose.yml
+!/LEGAL_ONTOLOGY.md
+!/README.md
+!/lc_app/
+!/kb_pipeline/
+!/streamlit/
+
+.env
+__pycache__/
+*.pyc
